@@ -1,0 +1,2 @@
+1. venv without cmd ------> https://stackoverflow.com/questions/56936293/run-python-script-without-activating-virtual-environment
+2. loading-animation -->    https://stackoverflow.com/questions/7039114/waiting-animation-in-command-prompt-python
