@@ -1,12 +1,14 @@
 import boto3
 import base64
-
+import os
+access = os.environ.get("access", "")
+secret = os.environ.get("secret", "")
+print(os.environ)
 client = boto3.resource(
     'ec2', 
-    aws_access_key_id='AKIA4NDHYX54CHRNEU5O',
-    aws_secret_access_key='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',
+    aws_access_key_id=access,
+    aws_secret_access_key=secret,
     region_name='us-east-1')
-
 
 with open("../docker/docker-install.sh", "rb") as data:
     encoded_string = base64.b64encode(data.read())

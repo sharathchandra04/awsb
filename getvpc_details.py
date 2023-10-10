@@ -1,13 +1,14 @@
 import boto3
 
-# Initialize the Boto3 EC2 client
-# ec2 = boto3.client('ec2')
-
-ec2 = boto3.client(
+access = os.environ.get("access", "")
+secret = os.environ.get("secret", "")
+print(os.environ)
+client = boto3.resource(
     'ec2', 
-    aws_access_key_id='AKIA4NDHYX54CHRNEU5O',
-    aws_secret_access_key='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',
+    aws_access_key_id=access,
+    aws_secret_access_key=secret,
     region_name='us-east-1')
+
 
 # Specify the VPC ID
 vpc_id = 'vpc-0c34260e2a53009e3'
@@ -40,3 +41,35 @@ if subnets:
         print()
 else:
     print('No subnets found for the specified VPC.')
+
+response = ec2.describe_route_tables(Filters=[{'Name': 'vpc-id', 'Values': [vpc_id]}])
+
+
+print('Route Tables in VPC', vpc_id)
+for route_table in response['RouteTables']:
+    route_table_id = route_table['RouteTableId']
+
+    # Fetch route table tags to get the name
+    tags_response = ec2.describe_tags(Filters=[{'Name': 'resource-id', 'Values': [route_table_id]}])
+    tags = {tag['Key']: tag['Value'] for tag in tags_response['Tags']}
+
+    route_table_name = tags.get('Name', 'N/A')
+    
+    print('Route Table ID:', route_table_id)
+    print('Route Table Name:', route_table_name)
+    print('==========================')
+
+
+subnet_associations = response['RouteTables'][0]['Associations']
+
+
+print('##################################')
+for association in subnet_associations:
+    subnet_id = association.get('SubnetId')
+    # Retrieve subnet information
+    subnet_response = ec2.describe_subnets(SubnetIds=[subnet_id])
+    subnet_info = subnet_response['Subnets'][0]
+    subnet_name = subnet_info.get('Tags', [{'Key': 'Name', 'Value': 'N/A'}])[0].get('Value', 'N/A')
+    print('Subnet ID:', subnet_id)
+    print('Subnet Name:', subnet_name)
+    print('==========================')

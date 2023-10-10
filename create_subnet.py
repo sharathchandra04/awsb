@@ -15,11 +15,15 @@ if args.cidr:
 if args.cidr:
     name = args.name
 
-ec2 = boto3.client(
+access = os.environ.get("access", "")
+secret = os.environ.get("secret", "")
+print(os.environ)
+client = boto3.resource(
     'ec2', 
-    aws_access_key_id='AKIA4NDHYX54CHRNEU5O',
-    aws_secret_access_key='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',
+    aws_access_key_id=access,
+    aws_secret_access_key=secret,
     region_name='us-east-1')
+
 
 
 vpc_id = 'vpc-0c34260e2a53009e3'
@@ -44,5 +48,13 @@ response = ec2.create_subnet(
         }
     ]
 )
-
 print('Subnet ID:', response['Subnet']['SubnetId'])
+
+route_table_id = 'YOUR_ROUTE_TABLE_ID'
+association_response = ec2.associate_route_table(
+    RouteTableId=route_table_id,
+    SubnetId=response['Subnet']['SubnetId']
+)
+
+print('Route table associated with subnet:', association_response['AssociationId'])
+

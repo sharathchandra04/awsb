@@ -21,10 +21,15 @@ regions= [
     'us-west-2'
 ]
 for region_name in regions:
-    ec2 = boto3.resource('ec2', 
-    aws_access_key_id='AKIA4NDHYX54CHRNEU5O',
-    aws_secret_access_key='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',
-    region_name=region_name)
+    access = os.environ.get("access", "")
+    secret = os.environ.get("secret", "")
+    print(os.environ)
+    client = boto3.resource(
+        'ec2', 
+        aws_access_key_id=access,
+        aws_secret_access_key=secret,
+        region_name='us-east-1')
+
     instances= ec2.meta.client.describe_instances()
     for instance in instances['Reservations']:
         print(instance['Instances'][0]['InstanceId'], instance['Instances'][0]['State']['Name'])

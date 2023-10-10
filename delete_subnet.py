@@ -9,11 +9,15 @@ subnet_id = None
 if args.subnet_id:
     subnet_id = args.subnet_id
 
-ec2 = boto3.client(
+access = os.environ.get("access", "")
+secret = os.environ.get("secret", "")
+print(os.environ)
+client = boto3.resource(
     'ec2', 
-    aws_access_key_id='AKIA4NDHYX54CHRNEU5O',
-    aws_secret_access_key='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',
+    aws_access_key_id=access,
+    aws_secret_access_key=secret,
     region_name='us-east-1')
+
 
 response = ec2.delete_subnet(SubnetId=subnet_id)
 print('Response from deleting subnet:', response)
